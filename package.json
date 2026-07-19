@@ -1,0 +1,16 @@
+{
+  "name": "blankos-shell",
+  "version": "1.0.0",
+  "description": "BlankOS - Minimal PS5-style desktop shell",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^38.0.0"
+  }
+}
