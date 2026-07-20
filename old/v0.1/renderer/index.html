@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>workspaceOS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Верхняя панель -->
+  <div class="top-bar">
+    <div class="datetime">
+      <span id="dateText">Загрузка...</span>
+      <span id="timeText">--:--</span>
+    </div>
+    <div class="top-right">
+      <button class="power-btn" onclick="togglePowerMenu()">⏻</button>
+      <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
+    </div>
+  </div>
+
+  <!-- Рабочий стол с иконками -->
+  <div class="desktop" id="desktop"></div>
+
+  <!-- Кнопка вызова лаунчера -->
+  <button class="apps-dot-btn" onclick="raiseWindowAndLauncher()">
+    <span class="dot"></span>
+  </button>
+
+  <!-- === ЛАУНЧЕР === -->
+  <div class="launcher-screen" id="launcherScreen" onclick="if(event.target===this) hideLauncherAndLower()">
+    <div class="launcher-content">
+      <input type="text" class="launcher-search" id="launcherSearch" placeholder="Поиск приложений..." oninput="filterApps(this.value)" autofocus>
+      <div class="launcher-grid" id="launcherGrid"></div>
+    </div>
+  </div>
+
+  <!-- === ПЕРЕКЛЮЧАТЕЛЬ ОКОН (ALT+TAB) === -->
+  <div class="window-switcher" id="windowSwitcher">
+    <div class="switcher-track" id="switcherTrack"></div>
+    <div class="switcher-hint">Alt+Tab для переключения • Enter для выбора</div>
+  </div>
+
+  <!-- === КОНТЕКСТНЫЕ МЕНЮ === -->
+  <div class="context-menu" id="contextMenu">
+    <div class="context-item" onclick="unpinFromContext()">Открепить</div>
+  </div>
+  <div class="context-menu" id="overviewContextMenu">
+    <div class="context-item" id="overviewContextAction" onclick="togglePinFromOverview()">Закрепить</div>
+  </div>
+
+  <!-- === МЕНЮ ПИТАНИЯ === -->
+  <div class="power-menu" id="powerMenu">
+    <button class="power-option" onclick="lockScreen()">🔒 Блокировка</button>
+    <button class="power-option" onclick="sleepSystem()">💤 Спящий режим</button>
+    <button class="power-option danger" onclick="shutdownSystem()">⏻ Выключить</button>
+  </div>
+
+  <!-- === БЛОКИРОВКА ЭКРАНА === -->
+  <div class="lock-screen" id="lockScreen" onclick="unlockScreen()">
+    <div class="lock-content">
+      <div class="lock-time" id="lockTime">--:--</div>
+      <div class="lock-date" id="lockDate">Нажмите, чтобы разблокировать</div>
+    </div>
+  </div>
+
+  <!-- === НАСТРОЙКИ === -->
+  <div class="modal-overlay" id="settingsModal" onclick="if(event.target===this) toggleSettings()">
+    <div class="modal-content vertical-layout glass">
+      <div class="settings-sidebar glass-sidebar">
+        <h2 style="margin-bottom: 20px; padding-left: 15px;">⚙️ Настройки</h2>
+        <div class="sidebar-menu">
+          <button class="menu-item active" onclick="switchTab('about', this)">О системе</button>
+          <button class="menu-item" onclick="switchTab('appearance', this)">Внешний вид</button>
+          <button class="menu-item" onclick="switchTab('datetime', this)">Дата и время</button>
+          <button class="menu-item" onclick="switchTab('performance', this)">Производительность</button>
+          <button class="menu-item" onclick="switchTab('apps', this)">Приложения</button>
+          <button class="menu-item" onclick="switchTab('system', this)">Система</button>
+        </div>
+      </div>
+      <div class="settings-main">
+        <!-- Вкладка: О системе -->
+        <div class="tab-content active" id="tab-about">
+          <div class="about-system">
+            <h1 class="about-title">workspaceOS</h1>
+            <p class="about-version">Версия 1.0.0</p>
+            <p class="about-description">Минималистичная оболочка рабочего стола.</p>
+            <div class="about-info-grid">
+              <div class="about-info-item solid-bg"><div class="about-info-label">Платформа</div><div class="about-info-value" id="aboutPlatform">Загрузка...</div></div>
+              <div class="about-info-item solid-bg"><div class="about-info-label">Node.js</div><div class="about-info-value" id="aboutNode">Загрузка...</div></div>
+              <div class="about-info-item solid-bg"><div class="about-info-label">Electron</div><div class="about-info-value" id="aboutElectron">Загрузка...</div></div>
+              <div class="about-info-item solid-bg"><div class="about-info-label">Архитектура</div><div class="about-info-value" id="aboutArch">Загрузка...</div></div>
+            </div>
+            <div class="about-credits"><p>© 2026 workspaceOS Project</p></div>
+          </div>
+        </div>
+
+        <!-- Вкладка: Внешний вид -->
+        <div class="tab-content" id="tab-appearance">
+          <h3>Темы оформления</h3>
+          <div class="theme-grid">
+            <div class="theme-card blue" onclick="setTheme('blue')">Голубая</div>
+            <div class="theme-card dark" onclick="setTheme('dark')">Тёмная</div>
+            <div class="theme-card purple active-theme" onclick="setTheme('purple')">Фиолетовая</div>
+            <div class="theme-card sunset" onclick="setTheme('sunset')">Закат</div>
+          </div>
+          <h3 style="margin-top:30px">Свой цвет фона</h3>
+          <div class="color-picker-row solid-bg">
+            <input type="color" id="customColorInput" onchange="setCustomColor(this.value)">
+            <span>Выберите цвет</span>
+          </div>
+          <h3 style="margin-top:30px">Обои</h3>
+          <label class="upload-btn solid-bg">📷 Загрузить фото<input type="file" accept="image/*" onchange="setCustomImage(this)" hidden></label>
+        </div>
+
+        <!-- Вкладка: Дата и время -->
+        <div class="tab-content" id="tab-datetime">
+          <h3>Формат даты</h3>
+          <div class="format-options">
+            <label class="format-option solid-bg"><input type="radio" name="dateFormat" value="full" onchange="setDateFormat('full')"><div class="format-preview"><div class="format-label">Полный</div><div class="format-example">Понедельник 20 июля 2026 год</div></div></label>
+            <label class="format-option solid-bg"><input type="radio" name="dateFormat" value="short" onchange="setDateFormat('short')"><div class="format-preview"><div class="format-label">Сокращённый</div><div class="format-example">Пн 20 июля 2026</div></div></label>
+            <label class="format-option solid-bg"><input type="radio" name="dateFormat" value="numeric" onchange="setDateFormat('numeric')"><div class="format-preview"><div class="format-label">Числовой</div><div class="format-example">20.07.2026</div></div></label>
+          </div>
+          <h3 style="margin-top:30px">Секунды</h3>
+          <div class="toggle-row solid-bg"><div class="toggle-info"><span class="toggle-title">Показывать секунды</span></div><label class="switch"><input type="checkbox" id="toggleSeconds" onchange="toggleSecondsDisplay(this.checked)"><span class="slider round"></span></label></div>
+        </div>
+
+        <!-- Вкладка: Производительность -->
+        <div class="tab-content" id="tab-performance">
+          <h3>Эффекты</h3>
+          <div class="toggle-row solid-bg"><div class="toggle-info"><span class="toggle-title">Прозрачность</span></div><label class="switch"><input type="checkbox" id="toggleTransparency" checked onchange="toggleEffect('transparency', this.checked)"><span class="slider round"></span></label></div>
+          <div class="toggle-row solid-bg"><div class="toggle-info"><span class="toggle-title">Анимации</span></div><label class="switch"><input type="checkbox" id="toggleAnimations" checked onchange="toggleEffect('animations', this.checked)"><span class="slider round"></span></label></div>
+        </div>
+
+        <!-- Вкладка: Приложения -->
+        <div class="tab-content" id="tab-apps">
+          <h3>Приложения</h3>
+          <p class="subtitle">Нажмите, чтобы добавить или убрать с рабочего стола.</p>
+          <div class="app-list" id="settingsAppList"></div>
+        </div>
+
+        <!-- Вкладка: Система -->
+        <div class="tab-content" id="tab-system">
+          <h3>Быстрый доступ</h3>
+          <div class="quick-settings-grid">
+            <div class="qs-item solid-bg" onclick="openSystemApp('sys_terminal')">💻 Терминал</div>
+            <div class="qs-item solid-bg" onclick="openSystemApp('sys_settings')">⚙️ Параметры</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

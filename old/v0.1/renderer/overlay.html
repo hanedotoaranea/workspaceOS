@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>workspaceOS - Overlay</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Дополнительные стили для оверлея */
+    body {
+      background: transparent !important;
+      overflow: hidden;
+    }
+    .overlay-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      z-index: 1;
+    }
+    /* Все элементы оверлея позиционируются поверх затемнения */
+    .launcher-screen, .window-switcher, .modal-overlay, .power-menu, .lock-screen, .context-menu {
+      z-index: 2;
+    }
+    /* Скрываем по умолчанию все, показываем при необходимости */
+  </style>
+</head>
+<body>
+  <div class="overlay-backdrop" onclick="hideOverlay()"></div>
+  
+  <!-- Все элементы, которые были удалены из index.html -->
+  <div class="launcher-screen" id="launcherScreen" onclick="if(event.target===this) hideOverlay()">
+    <div class="launcher-content">
+      <input type="text" class="launcher-search" placeholder="Поиск приложений..." oninput="filterApps(this.value)" autofocus>
+      <div class="launcher-grid" id="launcherGrid"></div>
+    </div>
+  </div>
+
+  <div class="window-switcher" id="windowSwitcher">
+    <div class="switcher-track" id="switcherTrack"></div>
+    <div class="switcher-hint">Alt+Tab для переключения • Enter для выбора</div>
+  </div>
+
+  <div class="context-menu" id="contextMenu">
+    <div class="context-item" onclick="unpinFromContext()">Открепить</div>
+  </div>
+
+  <div class="context-menu" id="overviewContextMenu">
+    <div class="context-item" id="overviewContextAction" onclick="togglePinFromOverview()">Закрепить</div>
+  </div>
+
+  <div class="power-menu" id="powerMenu">
+    <button class="power-option" onclick="lockScreen()">Блокировка</button>
+    <button class="power-option" onclick="sleepSystem()">Спящий режим</button>
+    <button class="power-option danger" onclick="shutdownSystem()">Выключить</button>
+  </div>
+
+  <div class="modal-overlay" id="settingsModal" onclick="if(event.target===this) hideOverlay()">
+    <div class="modal-content vertical-layout glass">
+      <!-- Содержимое настроек (оставляем как было) -->
+      <!-- ... -->
+    </div>
+  </div>
+
+  <div class="lock-screen" id="lockScreen" onclick="unlockScreen()">
+    <div class="lock-content">
+      <div class="lock-time" id="lockTime">--:--</div>
+      <div class="lock-date" id="lockDate">Нажмите, чтобы разблокировать</div>
+    </div>
+  </div>
+
+  <script src="overlay.js"></script>
+</body>
+</html>
